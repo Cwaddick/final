@@ -8,6 +8,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
+    <h2>Dnd Spell Tracker</h2>
     <div id="app">
         <ul id="objectList"></ul>
         
@@ -39,15 +40,20 @@
 <script>
 const retreival =()=> {
     const api = 'https://www.dnd5eapi.co/api/spells';
-    let objects = []; 
+    let string= ""
+    let objects = [{"index":"acid-arrow","name":"Acid Arrow","level":2,"url":"/api/spells/acid-arrow"}]; 
     function grabdata() {
         $.ajax({
             url: api,
             method: 'GET',
             dataType: 'json',
             success: function(results) {
-                objects = results; 
-                displayObjects(); 
+                console.log(results)
+                stringy=String(results)
+               console.log(stringy)
+                objects=stringy.split(",")
+                console.log(objects)
+                displayObjects(objects)
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error('Error fetching data:', textStatus, errorThrown);
@@ -56,20 +62,15 @@ const retreival =()=> {
     }
 
     
-    function displayObjects() {
+    function displayObjects(data) {
+        console.log(data)
         const $listContainer = $('#objectList');
         $listContainer.empty(); 
-
-       
-        if (Array.isArray(objects)) {
-            
-            objects.forEach(obj => {
+            data.forEach(obj => {
                 const $item = $('<li>').text(obj.name); 
                 $listContainer.append($item);
             });
-        } else {
-            console.error('Objects array is not valid:', objects);
-        }
+        
     }
 
     
@@ -121,12 +122,14 @@ const retreival =()=> {
 
     
     function displayObject(objectId) {
-        const object = objects.find(obj => obj.id === objectId);
-        if (object) {
-            alert(`Object ID: ${object.id}\nName: ${object.name}\nDescription: ${object.description}`);
-        } else {
-            alert('Object not found!');
-        }
+        objects.forEach(obj => {
+              if (obj.id ==objectId) {
+            alert(`Object ID: ${obj.id}\nName: ${obj.name}\nDescription: ${obj.link}`);
+        } 
+            });
+        
+
+        
     }
 
   
