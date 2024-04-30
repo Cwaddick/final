@@ -14,26 +14,26 @@
         
         
         <form id="addObjectForm">
-            <input type="text" name="objectId" placeholder=" " required>
-            <input type="text" name="objectName" placeholder=" " required>
-            <input type="text" name="objectDesc" placeholder=" " required>
+            <input type="text" name="objectId" placeholder="Index" required>
+            <input type="text" name="objectName" placeholder="Name" required>
+            <input type="text" name="objectDesc" placeholder="Level" required>
             <button type="submit">Add Object</button>
         </form>
     
         
-        <input type="text" id="objectIdInput" placeholder=" ">
+        <input type="text" id="objectIdInput" placeholder="Name">
         <button id="displayObjectBtn">Display Object Details</button>
     
         
         <form id="updateObjectForm">
-            <input type="text" id="updateObjectIdInput" placeholder=" " required>
-            <input type="text" id="updateObjectNameInput" placeholder=" ">
-            <input type="text" id="updateObjectDescInput" placeholder=" ">
+            <input type="text" id="updateObjectIdInput" placeholder="Index" required>
+            <input type="text" id="updateObjectNameInput" placeholder="Name">
+            <input type="text" id="updateObjectDescInput" placeholder="Level">
             <button type="submit">Update Object</button>
         </form>
     
         
-        <input type="text" id="deleteObjectIdInput" placeholder=" ">
+        <input type="text" id="deleteObjectIdInput" placeholder="Name">
         <button id="deleteObject">Delete Object</button>
     </div>
 </body>
@@ -48,12 +48,10 @@ const retreival =()=> {
             method: 'GET',
             dataType: 'json',
             success: function(results) {
-                console.log(results)
-                stringy=String(results)
-               console.log(stringy)
-                objects=stringy.split(",")
+                results.results
+                objects= results.results
                 console.log(objects)
-                displayObjects(objects)
+                displayObjects()
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error('Error fetching data:', textStatus, errorThrown);
@@ -62,11 +60,11 @@ const retreival =()=> {
     }
 
     
-    function displayObjects(data) {
-        console.log(data)
+    function displayObjects() {
+        
         const $listContainer = $('#objectList');
         $listContainer.empty(); 
-            data.forEach(obj => {
+            objects.forEach(obj => {
                 const $item = $('<li>').text(obj.name); 
                 $listContainer.append($item);
             });
@@ -81,9 +79,10 @@ const retreival =()=> {
         event.preventDefault();
         const formData = $(this).serializeArray();
         const newObject = {
-            id: formData[0].value,
+            index: formData[0].value,
             name: formData[1].value,
-            description: formData[2].value
+            level: formData[2].value,
+            url:""
         };
         addObject(newObject);
         $(this)[0].reset(); 
@@ -122,19 +121,19 @@ const retreival =()=> {
 
     
     function displayObject(objectId) {
-        objects.forEach(obj => {
-              if (obj.id ==objectId) {
-            alert(`Object ID: ${obj.id}\nName: ${obj.name}\nDescription: ${obj.link}`);
-        } 
-            });
-        
+        const object = objects.find(obj => obj.name === objectId);
+        if (object) {
+            alert(`Object Index: ${object.index}\nName: ${object.name}\nLevel: ${object.level}`);
+        } else {
+            alert('Object not found!');
+        }
 
         
     }
 
   
     function updateObject(objectId, newData) {
-        const objectIndex = objects.findIndex(obj => obj.id === objectId);
+        const objectIndex = objects.findIndex(obj => obj.name === objectId);
         if (objectIndex !== -1) {
             objects[objectIndex] = { ...objects[objectIndex], ...newData };
             displayObjects(); 
@@ -145,7 +144,7 @@ const retreival =()=> {
 
     
     function deleteObject(objectId) {
-        objects = objects.filter(obj => obj.id !== objectId);
+        objects = objects.filter(obj => obj.name !== objectId);
         displayObjects(); 
     }
 };
