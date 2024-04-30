@@ -4,16 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dnd Crud</title>
+    <link rel="stylesheet" href="dnd.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
-    <div id="dynamic">
+    <div id="interface">
         
     </div>
 </body>
 <script>
+const retrieval = () => {
+    const apiUrl = 'https://www.dnd5eapi.co/api/';
+
+    // Fetch data from API
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            // Process the retrieved data
+            console.log(data);
+            // Now you can work with 'data' to display or manipulate
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+};
+
+const addObject = (newObject) =>{
+    // Add newObject to your array of objects
+    // Example: objects.push(newObject);
+}
 
 
+const displayObject = (objectId) => {
+    
+}
+
+const updateObject = (objectId, newData) => {
+   
+}
+
+const deleteObject = (objectId) => {
+    // Filter out the object with matching ID from the array
+    // Example: objects = objects.filter(obj => obj.id !== objectId);
+}
+
+
+$('#addObjectForm').submit(function(event) {
+    event.preventDefault();
+    const formData = $(this).serializeArray();
+    const newObject = {
+        // Construct new object from form data
+    };
+    addObject(newObject);
+});
+
+$('#displayObjectBtn').click(function() {
+    const objectId = $('#objectIdInput').val();
+    displayObject(objectId);
+});
+
+$('#updateObjectForm').submit(function(event) {
+    event.preventDefault();
+    const objectId = $('#updateObjectIdInput').val();
+    const updatedData = {
+        // Retrieve updated data from form
+    };
+    updateObject(objectId, updatedData);
+});
+
+$('#deleteObjectBtn').click(function() {
+    const objectId = $('#deleteObjectIdInput').val();
+    deleteObject(objectId);
+});
+
+$(document).ready(retrieval)
 </script>
 
 </html>
