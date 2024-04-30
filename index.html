@@ -8,76 +8,106 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
-    <div id="interface">
+    <div id="app">
+        <ul id="objectList"></ul>
         
+        
+        <form id="addObjectForm">
+            <input type="text" name="objectId" placeholder=" " required>
+            <input type="text" name="objectName" placeholder=" " required>
+            <input type="text" name="objectDesc" placeholder=" " required>
+            <button type="submit">Add Object</button>
+        </form>
+    
+        
+        <input type="text" id="objectIdInput" placeholder=" ">
+        <button id="displayObjectBtn">Display Object Details</button>
+    
+        
+        <form id="updateObjectForm">
+            <input type="text" id="updateObjectIdInput" placeholder=" " required>
+            <input type="text" id="updateObjectNameInput" placeholder=" ">
+            <input type="text" id="updateObjectDescInput" placeholder=" ">
+            <button type="submit">Update Object</button>
+        </form>
+    
+        
+        <input type="text" id="deleteObjectIdInput" placeholder=" ">
+        <button id="deleteObject">Delete Object</button>
     </div>
 </body>
 <script>
-const retrieval = () => {
-    const apiUrl = 'https://www.dnd5eapi.co/api/';
+const retrieval= ()=> {
+    const url = 'https://www.dnd5eapi.co/api/spells';
+    let objects = []; 
 
-    // Fetch data from API
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            // Process the retrieved data
-            console.log(data);
-            // Now you can work with 'data' to display or manipulate
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
+    
+    function fetchData() {
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                objects = data; 
+                displayObjects(); 
+            })
+           
+    }
+
+    
+    function displayObjects() {
+        const $listContainer = $('#objectList');
+        $listContainer.empty(); 
+        objects.forEach(obj => {
+            const $item = $('<li>').text(obj.name); 
+            $listContainer.append($item);
         });
+    }
+
+    
+    fetchData();
 };
 
-const addObject = (newObject) =>{
-    // Add newObject to your array of objects
-    // Example: objects.push(newObject);
-}
-
-
-const displayObject = (objectId) => {
+const execution=()=> {
     
-}
+    $('#addObjectForm').submit(function(event) {
+        event.preventDefault();
+        const formData = $(this).serializeArray();
+        const newObject = {
+            id: formData[0].value,
+            name: formData[1].value,
+            description: formData[2].value
+        };
+        addObject(newObject);
+        $(this)[0].reset(); 
+    });
 
-const updateObject = (objectId, newData) => {
    
-}
+    $('#displayObjectBtn').click(function() {
+        const objectId = $('#objectIdInput').val();
+        displayObject(objectId);
+    });
 
-const deleteObject = (objectId) => {
-    // Filter out the object with matching ID from the array
-    // Example: objects = objects.filter(obj => obj.id !== objectId);
-}
+   
+    $('#updateObjectForm').submit(function(event) {
+        event.preventDefault();
+        const objectId = $('#updateObjectIdInput').val();
+        const updatedData = {
+            name: $('#updateObjectNameInput').val(),
+            description: $('#updateObjectDescInput').val()
+        };
+        updateObject(objectId, updatedData);
+        $(this)[0].reset(); 
+    });
 
-
-$('#addObjectForm').submit(function(event) {
-    event.preventDefault();
-    const formData = $(this).serializeArray();
-    const newObject = {
-        // Construct new object from form data
-    };
-    addObject(newObject);
-});
-
-$('#displayObjectBtn').click(function() {
-    const objectId = $('#objectIdInput').val();
-    displayObject(objectId);
-});
-
-$('#updateObjectForm').submit(function(event) {
-    event.preventDefault();
-    const objectId = $('#updateObjectIdInput').val();
-    const updatedData = {
-        // Retrieve updated data from form
-    };
-    updateObject(objectId, updatedData);
-});
-
-$('#deleteObjectBtn').click(function() {
-    const objectId = $('#deleteObjectIdInput').val();
-    deleteObject(objectId);
-});
+    
+    $('#deleteObject').click(function() {
+        const objectId = $('#deleteObjectIdInput').val();
+        deleteObject(objectId);
+        $('#deleteObjectIdInput').val(''); 
+    });
+};
 
 $(document).ready(retrieval)
+$(document).ready(execution)
 </script>
 
 </html>
